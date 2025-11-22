@@ -1,0 +1,38 @@
+{
+  "name": "github-setup-tools",
+  "version": "1.0.0",
+  "description": "Automated GitHub repository setup and troubleshooting tools",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "github-setup-tools": "./dist/cli/index.js",
+    "sync-git-branches": "./dist/cli/index.js",
+    "setup-branch-protection": "./dist/cli/index.js",
+    "validate-github-setup": "./dist/cli/index.js",
+    "automate-github-setup": "./dist/cli/index.js",
+    "generate-commit-message": "./dist/cli/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint src --ext .ts"
+  },
+  "keywords": ["github", "automation", "setup", "git"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "fast-check": "^3.15.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.0"
+  }
+}

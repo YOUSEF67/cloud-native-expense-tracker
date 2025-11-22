@@ -1,0 +1,42 @@
+{
+  "branchProtection": {
+    "branch": "main",
+    "requiredStatusChecks": [
+      "ci/lint",
+      "ci/test",
+      "ci/build"
+    ],
+    "requiredApprovals": 1,
+    "enforceAdmins": true,
+    "dismissStaleReviews": true,
+    "requireCodeOwnerReviews": false,
+    "requiredLinearHistory": false,
+    "allowForcePushes": false,
+    "allowDeletions": false
+  },
+  "secrets": [
+    "AWS_ACCOUNT_ID",
+    "AWS_REGION",
+    "ECR_REPOSITORY",
+    "EKS_CLUSTER_NAME_DEV",
+    "EKS_CLUSTER_NAME_STAGING",
+    "EKS_CLUSTER_NAME_PROD"
+  ],
+  "environments": [
+    {
+      "name": "dev",
+      "requiresApproval": false,
+      "approvers": []
+    },
+    {
+      "name": "staging",
+      "requiresApproval": false,
+      "approvers": []
+    },
+    {
+      "name": "production",
+      "requiresApproval": true,
+      "approvers": []
+    }
+  ]
+}

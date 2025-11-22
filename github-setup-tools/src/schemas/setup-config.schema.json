@@ -1,0 +1,100 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GitHub Setup Configuration",
+  "description": "Configuration file for automated GitHub repository setup",
+  "type": "object",
+  "properties": {
+    "branchProtection": {
+      "type": "object",
+      "description": "Branch protection configuration",
+      "properties": {
+        "branch": {
+          "type": "string",
+          "description": "Name of the branch to protect",
+          "default": "main"
+        },
+        "requiredStatusChecks": {
+          "type": "array",
+          "description": "List of required status check contexts",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "requiredApprovals": {
+          "type": "integer",
+          "description": "Number of required approving reviews",
+          "minimum": 0,
+          "default": 1
+        },
+        "enforceAdmins": {
+          "type": "boolean",
+          "description": "Whether to enforce restrictions for administrators",
+          "default": true
+        },
+        "dismissStaleReviews": {
+          "type": "boolean",
+          "description": "Whether to dismiss stale reviews on new commits",
+          "default": true
+        },
+        "requireCodeOwnerReviews": {
+          "type": "boolean",
+          "description": "Whether to require review from code owners",
+          "default": false
+        },
+        "requiredLinearHistory": {
+          "type": "boolean",
+          "description": "Whether to require linear history",
+          "default": false
+        },
+        "allowForcePushes": {
+          "type": "boolean",
+          "description": "Whether to allow force pushes",
+          "default": false
+        },
+        "allowDeletions": {
+          "type": "boolean",
+          "description": "Whether to allow branch deletions",
+          "default": false
+        }
+      },
+      "required": ["branch"]
+    },
+    "secrets": {
+      "type": "array",
+      "description": "List of required repository secrets",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "environments": {
+      "type": "array",
+      "description": "List of environments to create",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the environment"
+          },
+          "requiresApproval": {
+            "type": "boolean",
+            "description": "Whether deployments require approval",
+            "default": false
+          },
+          "approvers": {
+            "type": "array",
+            "description": "List of users/teams who can approve deployments",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          }
+        },
+        "required": ["name"]
+      },
+      "default": []
+    }
+  }
+}
