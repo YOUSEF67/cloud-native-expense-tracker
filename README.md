@@ -82,7 +82,7 @@ Your IAM user or role needs permissions to create and manage:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/cloud-native-expense-tracker.git
+git clone https://github.com/YOUSEF67/cloud-native-expense-tracker.git
 cd cloud-native-expense-tracker
 ```
 
