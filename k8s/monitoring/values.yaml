@@ -1,0 +1,17 @@
+grafana:
+  adminPassword: "admin"
+  ingress:
+    enabled: true
+    hosts:
+      - grafana.local
+
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelector: {}
+    serviceMonitorNamespaceSelector: {}
+
+alertmanager:
+  config:
+    global:
+      resolve_timeout: 5m

@@ -1,0 +1,106 @@
+{
+    "annotations": {
+        "list": []
+    },
+    "editable": true,
+    "gnetId": null,
+    "graphTooltip": 0,
+    "id": null,
+    "links": [],
+    "panels": [
+        {
+            "title": "RDS CPU Utilization",
+            "type": "graph",
+            "datasource": "CloudWatch",
+            "targets": [
+                {
+                    "namespace": "AWS/RDS",
+                    "metricName": "CPUUtilization",
+                    "statistics": [
+                        "Average"
+                    ],
+                    "dimensions": {
+                        "DBInstanceIdentifier": "$database"
+                    }
+                }
+            ],
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 0
+            }
+        },
+        {
+            "title": "ElastiCache CPU Utilization",
+            "type": "graph",
+            "datasource": "CloudWatch",
+            "targets": [
+                {
+                    "namespace": "AWS/ElastiCache",
+                    "metricName": "CPUUtilization",
+                    "statistics": [
+                        "Average"
+                    ],
+                    "dimensions": {
+                        "CacheClusterId": "$cache"
+                    }
+                }
+            ],
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 0
+            }
+        },
+        {
+            "title": "EKS Node CPU Usage",
+            "type": "graph",
+            "datasource": "Prometheus",
+            "targets": [
+                {
+                    "expr": "sum(rate(node_cpu_seconds_total{mode!=\"idle\"}[5m])) by (instance)",
+                    "legendFormat": "{{instance}}"
+                }
+            ],
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 8
+            }
+        }
+    ],
+    "schemaVersion": 27,
+    "style": "dark",
+    "tags": [
+        "infrastructure",
+        "aws"
+    ],
+    "templating": {
+        "list": [
+            {
+                "name": "database",
+                "query": "dimension_values(us-east-1,AWS/RDS,CPUUtilization,DBInstanceIdentifier)",
+                "datasource": "CloudWatch",
+                "type": "query"
+            },
+            {
+                "name": "cache",
+                "query": "dimension_values(us-east-1,AWS/ElastiCache,CPUUtilization,CacheClusterId)",
+                "datasource": "CloudWatch",
+                "type": "query"
+            }
+        ]
+    },
+    "time": {
+        "from": "now-6h",
+        "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "Infrastructure Metrics",
+    "uid": "infra-metrics",
+    "version": 1
+}

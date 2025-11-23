@@ -1,0 +1,12 @@
+# Example Terraform Variables for Bootstrap Module
+# Copy this file to terraform.tfvars and update with your values
+
+# AWS region where the state bucket and DynamoDB table will be created
+aws_region = "us-east-1"
+
+# Your AWS account ID (12 digits)
+# You can find this by running: aws sts get-caller-identity --query Account --output text
+aws_account_id = "123456789012"
+
+# Project name (used for resource naming)
+project_name = "expense"

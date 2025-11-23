@@ -1,0 +1,66 @@
+name: CD Dev
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'app/**'
+      - 'helm/**'
+      - 'k8s/**'
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: expense-tracker-app
+  EKS_CLUSTER_NAME: expense-tracker-dev
+  ENVIRONMENT: dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/github-actions-role
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push image to Amazon ECR
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+    - name: Update kubeconfig
+      run: aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
+
+    - name: Deploy to EKS
+      env:
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        helm upgrade --install expense-tracker ./helm \
+          --namespace default \
+          --set image.tag=$IMAGE_TAG \
+          --values ./helm/values.yaml \
+          --wait --timeout 5m
+
+    - name: Smoke Test
+      run: |
+        # Wait for service IP/DNS
+        sleep 30
+        # Simple health check (assuming port-forward or ingress access, here just checking pod status)
+        kubectl get pods -l app.kubernetes.io/name=expense-tracker

@@ -1,0 +1,97 @@
+{
+    "annotations": {
+        "list": []
+    },
+    "editable": true,
+    "gnetId": null,
+    "graphTooltip": 0,
+    "id": null,
+    "links": [],
+    "panels": [
+        {
+            "title": "Total Transactions",
+            "type": "stat",
+            "datasource": "Prometheus",
+            "targets": [
+                {
+                    "expr": "transactions_total",
+                    "legendFormat": "Total"
+                }
+            ],
+            "gridPos": {
+                "h": 4,
+                "w": 6,
+                "x": 0,
+                "y": 0
+            }
+        },
+        {
+            "title": "Total Amount",
+            "type": "stat",
+            "datasource": "Prometheus",
+            "targets": [
+                {
+                    "expr": "transactions_amount_total",
+                    "legendFormat": "Amount"
+                }
+            ],
+            "gridPos": {
+                "h": 4,
+                "w": 6,
+                "x": 6,
+                "y": 0
+            }
+        },
+        {
+            "title": "Transactions per Minute",
+            "type": "graph",
+            "datasource": "Prometheus",
+            "targets": [
+                {
+                    "expr": "rate(transactions_total[1m]) * 60",
+                    "legendFormat": "TPM"
+                }
+            ],
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 4
+            }
+        },
+        {
+            "title": "Transactions by Merchant",
+            "type": "piechart",
+            "datasource": "Prometheus",
+            "targets": [
+                {
+                    "expr": "topk(5, sum(rate(transactions_total[1h])) by (merchant))",
+                    "legendFormat": "{{merchant}}"
+                }
+            ],
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 4
+            }
+        }
+    ],
+    "schemaVersion": 27,
+    "style": "dark",
+    "tags": [
+        "business"
+    ],
+    "templating": {
+        "list": []
+    },
+    "time": {
+        "from": "now-24h",
+        "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "Business Metrics",
+    "uid": "biz-metrics",
+    "version": 1
+}
