@@ -1,8 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
 from typing import List
 from datetime import datetime
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from app.database import get_db
 from app.models import Transaction
@@ -12,12 +14,25 @@ import structlog
 
 router = APIRouter()
 logger = structlog.get_logger()
+limiter = Limiter(key_func=get_remote_address)
 
-@router.get("/health", response_model=HealthResponse)
+@router.get("/health", response_model=HealthResponse, tags=["health"])
+@limiter.limit("30/minute")
 async def health_check(
+    request: Request,
     db: AsyncSession = Depends(get_db),
     cache: Cache = Depends(get_redis)
 ):
+    """
+    Check the health status of the API and its dependencies.
+    
+    Returns the status of:
+    - API service
+    - Database connection
+    - Redis cache connection
+    
+    Rate limit: 30 requests per minute
+    """
     db_status = "up"
     try:
         await db.execute(select(1))

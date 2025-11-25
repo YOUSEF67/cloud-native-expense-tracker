@@ -9,3 +9,13 @@ prometheus-client==0.23.1
 python-multipart==0.0.20
 cryptography==46.0.3
 alembic==1.17.2
+
+# Testing
+pytest==8.3.4
+pytest-asyncio==0.24.0
+pytest-cov==6.0.0
+httpx==0.28.1
+aiosqlite==0.20.0
+
+# Rate Limiting
+slowapi==0.1.9
