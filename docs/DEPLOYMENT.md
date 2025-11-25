@@ -31,7 +31,24 @@ terraform init
 terraform apply
 ```
 
-## 3. Application Deployment
+## 3. Local Development
+
+### Run with Docker Compose
+```bash
+# Start all services (MySQL, Redis, App)
+docker-compose up --build -d
+
+# Wait for services to be ready
+sleep 10
+
+# Run migrations
+docker-compose exec app alembic upgrade head
+
+# Test the API
+./scripts/test_local.sh
+```
+
+## 4. Application Deployment
 
 ### Build Docker Image
 ```bash
@@ -52,12 +69,30 @@ docker push <ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/expense-tracker-app:lat
 helm upgrade --install expense-tracker ./helm \
   --set image.repository=<ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/expense-tracker-app \
   --set image.tag=latest \
-  --values ./helm/values.yaml
+  --values ./helm/values.yaml \
+  --namespace expense \
+  --create-namespace
 ```
 
-## 4. CI/CD Setup
+## 5. CI/CD Setup
 
 The project uses GitHub Actions for CI/CD.
 1. Configure OpenID Connect (OIDC) provider in AWS (handled by Terraform).
 2. Note the IAM Role ARN created for GitHub Actions.
 3. Add `AWS_ACCOUNT_ID` to GitHub Repository Secrets.
+
+## 6. Verify Deployment
+
+```bash
+# Check pod status
+kubectl get pods -n expense
+
+# Check service
+kubectl get svc -n expense
+
+# Check ingress
+kubectl get ingress -n expense
+
+# View logs
+kubectl logs -f deployment/expense-tracker -n expense
+```

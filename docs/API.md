@@ -3,7 +3,9 @@
 The Expense Tracker API provides endpoints for managing financial transactions.
 
 ## Base URL
-`https://api.expense-tracker.com/api/v1`
+
+**Production**: `https://api.expense-tracker.com/api/v1`  
+**Local Development**: `http://localhost:8080/api/v1`
 
 ## Endpoints
 

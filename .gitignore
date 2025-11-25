@@ -85,10 +85,3 @@ logs/
 # Temporary files
 tmp/
 temp/
-
-# AI Tools
-.kiro/
-.gemini/
-.cursor/
-.aider*
-

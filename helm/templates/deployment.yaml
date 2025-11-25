@@ -1,112 +1,32 @@
-apiVersion: apps/v1
 kind: Deployment
+apiVersion: apps/v1
 metadata:
-  name: {{ include "expense-tracker.fullname" . }}
+  name: backend
+  namespace: expense
+  # these labels are deployment related labels
   labels:
-    {{- include "expense-tracker.labels" . | nindent 4 }}
+    component: backend
+    project: expense
+    tier: app
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
-  {{- end }}
+  replicas: {{ .Values.deployment.replicas }}
   selector:
     matchLabels:
-      {{- include "expense-tracker.selectorLabels" . | nindent 6 }}
+      component: backend
+      project: expense
+      tier: app
+  # pod definition
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       labels:
-        {{- include "expense-tracker.selectorLabels" . | nindent 8 }}
+        component: backend
+        project: expense
+        tier: app
     spec:
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      serviceAccountName: {{ include "expense-tracker.serviceAccountName" . }}
-      securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - name: http
-              containerPort: {{ .Values.service.port }}
-              protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /api/v1/health
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /api/v1/health
-              port: http
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-          env:
-            - name: LOG_LEVEL
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ include "expense-tracker.fullname" . }}
-                  key: LOG_LEVEL
-            - name: DB_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ include "expense-tracker.fullname" . }}
-                  key: DB_HOST
-            - name: DB_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ include "expense-tracker.fullname" . }}
-                  key: DB_PORT
-            - name: DB_NAME
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ include "expense-tracker.fullname" . }}
-                  key: DB_NAME
-            - name: DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "expense-tracker.fullname" . }}
-                  key: DB_USER
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "expense-tracker.fullname" . }}
-                  key: DB_PASSWORD
-            - name: REDIS_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ include "expense-tracker.fullname" . }}
-                  key: REDIS_HOST
-            - name: REDIS_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ include "expense-tracker.fullname" . }}
-                  key: REDIS_PORT
-            - name: REDIS_SSL
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ include "expense-tracker.fullname" . }}
-                  key: REDIS_SSL
-            - name: REDIS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "expense-tracker.fullname" . }}
-                  key: REDIS_PASSWORD
-      {{- with .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+      - name: backend
+        imagePullPolicy: always
+        image: 315069654700.dkr.ecr.us-east-1.amazonaws.com/expense-backend:{{ .Values.deployment.imageVersion }}
+        envFrom:
+        - configMapRef:
+            name: backend
